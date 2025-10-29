@@ -1,0 +1,10 @@
+{
+  "COLE_AQUI_O_ID_DO_GRUPO_DE_FILMES@g.us": {
+    "formatofilme": "⚠️ AVISO IMPORTANTE SOBRE PEDIDOS ⚠️\n\nOlá, pessoal!\n\nPara agilizar os pedidos de filmes, por favor, sigam as regras:\n\n1️⃣ Coloquem o NOME CORRETO do filme.\n2️⃣ Adicionem o ANO DE LANÇAMENTO.\n\n*Atenção:* Em breve, pedidos sem data ou com o nome incorreto serão ignorados.\n\n*Dica:* Se não souber o ano, uma rápida pesquisa no Google ajuda!\n\nObrigado pela compreensão!",
+    "outroaviso": "Texto de um segundo aviso para este grupo..." 
+  },
+  "COLE_AQUI_O_ID_DE_OUTRO_GRUPO@g.us": {
+    "aviso1": "Texto do primeiro aviso para o segundo grupo.",
+    "aviso2": "Texto do segundo aviso para o segundo grupo."
+  }
+}
