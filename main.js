@@ -6,6 +6,7 @@ import {
     // REMOVEMOS o fetchLatestBaileysVersion, ele é a causa do Erro 405
 } from '@whiskeysockets/baileys';
 
+import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import pino from 'pino';
@@ -245,3 +246,13 @@ async function main() { console.log("🚀 Iniciando DemolyBot+..."); await loadP
 
 // Inicia o bot
 main().catch(err => console.error('❌ Erro fatal na inicialização:', err));
+
+// --- CÓDIGO PARA MANTER O REPLIT ACORDADO 24/7 ---
+const app = express();
+app.get('/', (req, res) => {
+  res.send('O DemolyBot+ está vivo!');
+});
+
+app.listen(3000, () => {
+  console.log('🚀 Servidor web rodando na porta 3000 para manter o bot acordado!');
+});
