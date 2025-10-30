@@ -1,2 +1,2 @@
 # DemolyBot
-bot moderação para grupo de whatsapp de filmes
+bot moderação para grupo de zapp de filmes
