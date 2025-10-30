@@ -1,11 +1,12 @@
-// ================== DEMOLYBOT+ MAIN.JS (VERSÃO FINAL - "EDGE") ==================
+// ================== DEMOLYBOT+ MAIN.JS (VERSÃO FINAL REPLIT) ==================
 import {
     makeWASocket,
     useMultiFileAuthState,
     DisconnectReason
-    // REMOVEMOS o fetchLatestBaileysVersion, ele é a causa do Erro 405
+    // REMOVEMOS o fetchLatestBaileysVersion (causa do Erro 405)
 } from '@whiskeysockets/baileys';
 
+// Importa o 'express' para manter o bot acordado
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
@@ -13,7 +14,6 @@ import pino from 'pino';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { Boom } from '@hapi/boom';
 import { scheduleJob } from 'node-schedule';
-// CORREÇÃO: Voltamos para o qrcode-terminal, é mais rápido que salvar arquivo
 import qrcode from 'qrcode-terminal'; 
 import config from './config.js';
 import { isBotAdmin } from './plugins/utils/checkAdmin.js';
@@ -22,7 +22,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // ================== FUNÇÕES DE CONFIGURAÇÃO (Definidas UMA VEZ AQUI) ==================
-// (Todo o seu código de carregar/salvar JSONs permanece igual... está perfeito)
 const blacklistFile = path.join(__dirname, 'blacklist.json');
 export function loadBlacklist() {
     try {
@@ -62,7 +61,6 @@ export function salvarWelcomeConfig(config) {
 // --- Fim Funções Config ---
 
 // ================== CARREGADOR DE PLUGINS ==================
-// (O seu carregador de plugins está perfeito e permanece igual)
 const commands = new Map();
 async function loadPlugins(dir = path.join(__dirname, 'plugins')) {
     if (path.basename(dir) === 'utils') return;
@@ -104,10 +102,9 @@ async function loadPlugins(dir = path.join(__dirname, 'plugins')) {
 async function startBot() {
     const { state, saveCreds } = await useMultiFileAuthState('./auth');
     
-    // REMOVEMOS O 'fetchLatestBaileysVersion'. Ele estava causando o Erro 405.
+    // REMOVEMOS 'fetchLatestBaileysVersion' e 'version,'
     
     const sock = makeWASocket({
-        // REMOVEMOS a linha 'version,'. Ela causava o 'ReferenceError'.
         auth: state,
         logger: pino({ level: 'silent' }),
         browser: [config.botName || 'DemolyBot+', 'Chrome', '1.0.0'],
@@ -117,10 +114,8 @@ async function startBot() {
     sock.ev.on('connection.update', (update) => {
         const { qr, connection, lastDisconnect } = update;
         
-        // CORREÇÃO: Voltamos a imprimir no terminal. É mais rápido.
         if (qr) {
-            console.log('\n📲 QR Code! Escaneie RÁPIDO direto do terminal:');
-            // Maximize a janela e diminua o zoom (Ctrl + Roda do Mouse)
+            console.log('\n📲 QR Code! Escaneie direto do terminal "Console" do Replit:');
             qrcode.generate(qr, { small: true });
         }
         
@@ -130,7 +125,7 @@ async function startBot() {
             const shouldReconnect = reason !== DisconnectReason.loggedOut;
             console.log(`❌ Conexão fechada (${reason}). Reconectando: ${shouldReconnect}`);
             
-            // Mantemos o timer longo de 90s por segurança.
+            // Timer longo de 90s por segurança
             if (shouldReconnect) setTimeout(() => startBot().catch(console.error), 90000); 
             else console.log('Desconectado permanentemente. Apague auth/.');
         }
@@ -139,13 +134,15 @@ async function startBot() {
     // --- Fim Conexão ---
 
     // ================== AGENDAMENTOS ==================
-    // (Todo o seu código de agendamentos permanece igual... está perfeito)
     console.log("⏰ Configurando agendamentos...");
     const GRUPOS_COM_HORARIO_ESPECIAL = [
         '120363323536694589@g.us', 
         '120363213540794994@g.us'
+        // Adicione seus outros IDs de grupo aqui, se necessário
     ];
     console.log(`⏰ Horário especial (Dom off) para: ${GRUPOS_COM_HORARIO_ESPECIAL.length} grupos.`);
+    
+    // (Seu código de agendamentos está ótimo e permanece aqui)
     scheduleJob('0 7 * * 1-6', async () => {
         try {
             console.log("⏰ Exec: Abrir Especiais (Seg-Sáb)."); const cfg = carregarGruposConfig();
@@ -192,7 +189,6 @@ async function startBot() {
     // --- Fim Agendamentos ---
 
     // ================== EVENTO DE ENTRADA E SAÍDA ==================
-    // (Seu código de eventos permanece igual... está perfeito)
     sock.ev.on('group-participants.update', async (update) => {
         try {
             const { id, participants, action } = update; const blacklist = loadBlacklist(); const gruposConfig = carregarGruposConfig(); const welcomeConfig = carregarWelcomeConfig(); const configGrupo = gruposConfig[id] || {};
@@ -220,7 +216,6 @@ async function startBot() {
     // --- Fim Evento Entrada/Saída ---
 
     // ================== MENSAGENS / COMANDOS ==================
-    // (Seu código de comandos permanece igual... está perfeito)
     sock.ev.on('messages.upsert', async (m) => {
         try {
             const msg = m.messages[0]; if (!msg.message || msg.key.fromMe || msg.key.remoteJid === 'status@broadcast') return;
@@ -242,10 +237,6 @@ async function startBot() {
 
 // --- Função Principal ---
 async function main() { console.log("🚀 Iniciando DemolyBot+..."); await loadPlugins(); console.log(`🔌 ${commands.size} comandos carregados.`); await startBot(); }
-// --- Fim Função Principal ---
-
-// Inicia o bot
-main().catch(err => console.error('❌ Erro fatal na inicialização:', err));
 
 // --- CÓDIGO PARA MANTER O REPLIT ACORDADO 24/7 ---
 const app = express();
@@ -253,6 +244,11 @@ app.get('/', (req, res) => {
   res.send('O DemolyBot+ está vivo!');
 });
 
-app.listen(3000, () => {
-  console.log('🚀 Servidor web rodando na porta 3000 para manter o bot acordado!');
+// CORREÇÃO: Usa a porta dinâmica do Replit (process.env.PORT)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor web rodando na porta ${PORT} para manter o bot acordado!`);
 });
+
+// Inicia o bot
+main().catch(err => console.error('❌ Erro fatal na inicialização:', err));

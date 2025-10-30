@@ -15,7 +15,7 @@ export default {
             const prefix = config.prefix || '!';
             
             // Pega a lista de comandos (as chaves) de dentro do plugin de áudios
-            const listaDeComandos = audioPlugin.command || [];
+            const listaDeComandos = Plugin.command || [];
 
             if (listaDeComandos.length === 0) {
                 return await sock.sendMessage(chatId, { text: 'Nenhum áudio de meme configurado no momento.' });
@@ -33,7 +33,7 @@ ${listaDeComandos.map(cmd => `• ${prefix}${cmd}`).join('\n')}
             await sock.sendMessage(chatId, { text: texto });
 
         } catch (e) {
-            console.error("Erro no menuaudios:", e);
+            console.error("Erro no menus:", e);
             await sock.sendMessage(chatId, { text: '⚠️ Erro ao exibir o menu de áudios.' });
         }
     }
